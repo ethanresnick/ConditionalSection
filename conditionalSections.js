@@ -7,6 +7,12 @@
 
         SubClassConstructor.prototype = new Chainer();
         SubClassConstructor.prototype.constructor = SubClassConstructor;
+		//Set super as not an prototype property so that it's less susceptible to reassignments of this. e.g. calling SubClass.x() might
+		//really produce a call of subType.__proto__.__proto__.x() (i.e. an x on the prototype of the SuperClass), and in that x `this`
+		//will point to the SubClass instance, even though the SuperClass's method probably expects it to point to the SuperClass' instance.
+		//We could make it an inherited property too (i.e. on SubClassConstructor.prototype), but there's really no need. Any instance
+		//that wants to get access to it's parent's prototype can do so with inst.constructor.__super__;
+		SubClassConstructor.__super__  = SuperClassConstructor.prototype;
     };
     
     /**
@@ -18,7 +24,7 @@
      */ 
     function ConditionalSection(container) {
         var that = this;
-        
+		
         this.container = container;
         this.toggle    = container.find('.' + this.constants.classToggle);
         this.section   = container.find('.' + this.constants.classSection).eq(0);
@@ -49,7 +55,8 @@
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */     
     function ConditionalSectionSet(container) {
-        ConditionalSection.prototype.constructor.call(this, container);
+        ConditionalSectionSet.__super__.constructor.call(this, container);
+
         this.sections     = container.find('.' + this.constants.classSection);
         this.section      = this.toggle.find(':checked').length ? this.sections.filter('.'+ this.toggle.find(':checked').eq(0).val()) : false;
     }
@@ -65,7 +72,8 @@
     }
 
     ConditionalSectionSet.prototype.render = function() {
-        ConditionalSection.prototype.render.call(this);
+        ConditionalSectionSet.__super__.render.call(this);
+
         this.sections.removeClass(this.constants.classShownSection);
         if(this.section) { this.section.addClass(this.constants.classShownSection); }
     }
@@ -78,7 +86,8 @@
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */     
     function DecisionScreenSet(container, preUpdateCallback) {
-        ConditionalSectionSet.prototype.constructor.call(this, container);
+        DecisionScreenSet.__super__.constructor.call(this, container);
+
         this.preUpdate = preUpdateCallback || function() {};
     }
     extend(DecisionScreenSet, ConditionalSectionSet);
@@ -88,7 +97,7 @@
 	        this.preUpdate(event);
 			this.toggle.hide();
 		}
-        ConditionalSectionSet.prototype.update.call(this, event);
+        DecisionScreenSet.__super__.update.call(this, event);
     }
 
     DecisionScreenSet.prototype.showToggle = function() {
