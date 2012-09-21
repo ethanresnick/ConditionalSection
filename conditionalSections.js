@@ -37,7 +37,7 @@
         this.toggle.find('input').length ? this.toggle.change(listener) : this.toggle.click(listener);
     }
     
-    ConditionalSection.prototype.constants = {'classHidden': 'condition-not-met', 'classShown': 'condition-met', 'classSection': 'contents', 'classToggle': 'toggle'};
+    ConditionalSection.prototype.constants = {'classContainer':'conditional-section', 'classHidden': 'condition-not-met', 'classShown': 'condition-met', 'classSection': 'contents', 'classToggle': 'toggle'};
     ConditionalSection.prototype.handleEvent = function(event) {
         this.update($(event.target));
     }
@@ -60,8 +60,8 @@
      */     
     function ConditionalSectionSet(container) {
         ConditionalSectionSet.__super__.constructor.call(this, container);
-
-        this.sections     = container.find('.' + this.constants.classSection);
+		var that = this;
+        this.sections     = container.find('.' + this.constants.classSection).filter(function() { return ($(this).parents('.'+ that.constants.classContainer).get(0)==container.get(0)); });
         this.section      = this.toggle.find(':checked').length ? this.sections.filter('.'+ this.toggle.find(':checked').eq(0).val()) : false;
     }
     extend(ConditionalSectionSet, ConditionalSection);
