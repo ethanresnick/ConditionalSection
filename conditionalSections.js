@@ -96,15 +96,17 @@
     }
     extend(DecisionScreenSet, ConditionalSectionSet);
     
-    DecisionScreenSet.prototype.update = function(event) {
-		if($(event.target).val()) {
-	        this.preUpdate(event);
+		if(elm.val()!='toggle') {
 			this.toggle.hide();
 		}
         DecisionScreenSet.__super__.update.call(this, event);
+		else {
+		}
+        
     }
 
-    DecisionScreenSet.prototype.showToggle = function() {
+    DecisionScreenSet.prototype.reset = function() {
+		this.sections.hide();
         this.toggle.show();
     }
 
