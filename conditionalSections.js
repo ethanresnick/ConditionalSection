@@ -23,8 +23,9 @@
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */ 
     function ConditionalSection(container) {
-        var that = this;
-		
+        var that = this,
+            listener = function(e) { that.handleEvent(e); };
+        
         this.container = container;
         this.toggle    = container.find('.' + this.constants.classToggle);
         this.section   = container.find('.' + this.constants.classSection).eq(0);
@@ -33,11 +34,14 @@
     
         //add listeners, etc
         if(!this.toggle.find('input,a').length) { this.toggle.contents().wrap('<a href="" onclick="return false;" />'); }
-        this.toggle.find('input').length ? this.toggle.change(function(e) { that.update(e); }) : this.toggle.click(function(e) { that.update(e); });
+        this.toggle.find('input').length ? this.toggle.change(listener) : this.toggle.click(listener);
     }
     
     ConditionalSection.prototype.constants = {'classHidden': 'condition-not-met', 'classShown': 'condition-met', 'classSection': 'contents', 'classToggle': 'toggle'};
-    ConditionalSection.prototype.update = function(event) {
+    ConditionalSection.prototype.handleEvent = function(event) {
+        this.update($(event.target));
+    }
+    ConditionalSection.prototype.update = function(elm) {
         this.isShown = !this.isShown;
         this.render();
     }
@@ -63,12 +67,14 @@
     extend(ConditionalSectionSet, ConditionalSection);
     ConditionalSectionSet.prototype.constants.classShownSection = 'active-section';
 
-    ConditionalSectionSet.prototype.update = function(event) {
-		if($(event.target).val()) {
+    ConditionalSectionSet.prototype.handleEvent = function(event) {
+        var target = $(event.target);
+        if(target.val()) { this.update(target); }
+    }
+    ConditionalSectionSet.prototype.update = function(elm) {
             this.isShown = true;
-	        this.section = this.sections.filter('.'+$(event.target).val());
-	        this.render();
-        }
+            this.section = this.sections.filter('.'+elm.val());
+            this.render();
     }
 
     ConditionalSectionSet.prototype.render = function() {
@@ -87,8 +93,6 @@
      */     
     function DecisionScreenSet(container, preUpdateCallback) {
         DecisionScreenSet.__super__.constructor.call(this, container);
-
-        this.preUpdate = preUpdateCallback || function() {};
     }
     extend(DecisionScreenSet, ConditionalSectionSet);
     
