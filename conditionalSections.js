@@ -7,12 +7,12 @@
 
         SubClassConstructor.prototype = new Chainer();
         SubClassConstructor.prototype.constructor = SubClassConstructor;
-		//Set super as not an prototype property so that it's less susceptible to reassignments of this. e.g. calling SubClass.x() might
-		//really produce a call of subType.__proto__.__proto__.x() (i.e. an x on the prototype of the SuperClass), and in that x `this`
-		//will point to the SubClass instance, even though the SuperClass's method probably expects it to point to the SuperClass' instance.
-		//We could make it an inherited property too (i.e. on SubClassConstructor.prototype), but there's really no need. Any instance
-		//that wants to get access to it's parent's prototype can do so with inst.constructor.__super__;
-		SubClassConstructor.__super__  = SuperClassConstructor.prototype;
+        //Set super as not an prototype property so that it's less susceptible to reassignments of this. e.g. calling SubClass.x() might
+        //really produce a call of subType.__proto__.__proto__.x() (i.e. an x on the prototype of the SuperClass), and in that x `this`
+        //will point to the SubClass instance, even though the SuperClass's method probably expects it to point to the SuperClass' instance.
+        //We could make it an inherited property too (i.e. on SubClassConstructor.prototype), but there's really no need. Any instance
+        //that wants to get access to it's parent's prototype can do so with inst.constructor.__super__;
+        SubClassConstructor.__super__  = SuperClassConstructor.prototype;
     };
     
     /**
@@ -35,7 +35,7 @@
         if(!this.toggle.find('input,a').length) { this.toggle.contents().wrap('<a href="" onclick="return false;" />'); }
         this.toggle.find('input').length ? this.toggle.change(function(e) { that.update(e); }) : this.toggle.click(function(e) { that.update(e); });
     }
-
+    
     ConditionalSection.prototype.constants = {'classHidden': 'condition-not-met', 'classShown': 'condition-met', 'classSection': 'contents', 'classToggle': 'toggle'};
     ConditionalSection.prototype.update = function(event) {
         this.isShown = !this.isShown;
