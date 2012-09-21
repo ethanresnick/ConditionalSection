@@ -93,23 +93,21 @@
      */     
     function DecisionScreenSet(container, preUpdateCallback) {
         DecisionScreenSet.__super__.constructor.call(this, container);
+		this.sections.bind('click change', {'that':this}, function(e) {
+			if($(e.target).val()=='toggle') { e.data.that.reset(); }
+		});
     }
     extend(DecisionScreenSet, ConditionalSectionSet);
     
     DecisionScreenSet.prototype.update = function(elm) {
-		if(elm.val()!='toggle') {
-			this.toggle.hide();
-	        DecisionScreenSet.__super__.update.call(this, elm);
-		}
-		else {
-			this.reset();	
-		}
-        
+		this.toggle.hide();
+	    DecisionScreenSet.__super__.update.call(this, elm);
     }
 
     DecisionScreenSet.prototype.reset = function() {
-		this.sections.hide();
-        this.toggle.show();
+		this.section = false;
+		this.toggle.show();
+		this.render();
     }
 
     //export from the closure
