@@ -96,11 +96,13 @@
     }
     extend(DecisionScreenSet, ConditionalSectionSet);
     
+    DecisionScreenSet.prototype.update = function(elm) {
 		if(elm.val()!='toggle') {
 			this.toggle.hide();
+	        DecisionScreenSet.__super__.update.call(this, elm);
 		}
-        DecisionScreenSet.__super__.update.call(this, event);
 		else {
+			this.reset();	
 		}
         
     }
