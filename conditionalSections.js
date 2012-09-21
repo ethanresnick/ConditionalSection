@@ -57,9 +57,11 @@
     ConditionalSectionSet.prototype.constants.classShownSection = 'active-section';
 
     ConditionalSectionSet.prototype.update = function(event) {
-        this.isShown = true;
-        this.section = this.sections.filter('.'+$(event.target).val());
-        this.render();
+		if($(event.target).val()) {
+            this.isShown = true;
+	        this.section = this.sections.filter('.'+$(event.target).val());
+	        this.render();
+        }
     }
 
     ConditionalSectionSet.prototype.render = function() {
@@ -82,11 +84,10 @@
     extend(DecisionScreenSet, ConditionalSectionSet);
     
     DecisionScreenSet.prototype.update = function(event) {
-        this.preUpdate(event);
-
-        if($(event.target).val()) {//a valid option
-            this.toggle.hide();
-        }
+		if($(event.target).val()) {
+	        this.preUpdate(event);
+			this.toggle.hide();
+		}
         ConditionalSectionSet.prototype.update.call(this, event);
     }
 
