@@ -23,8 +23,8 @@
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */ 
     function ConditionalSection(container) {
-        var that = this,
-            listener = function(e) { that.handleEvent(e); };
+		//this binding for our event listeners and exposing the object in handleEvent.
+        var that = this, data = {'that':this}, listener = function(e) { that.handleEvent(e); };
         
         this.container = container;
         this.toggle    = container.find('.' + this.constants.classToggle);
@@ -34,14 +34,14 @@
     
         //add listeners, etc
         if(!this.toggle.find('input,a').length) { this.toggle.contents().wrap('<a href="" onclick="return false;" />'); }
-        this.toggle.find('input').length ? this.toggle.change(listener) : this.toggle.click(listener);
+        this.toggle.find('input').length ? this.toggle.change(data, listener) : this.toggle.click(data, listener);
     }
     
     ConditionalSection.prototype.constants = {'classContainer':'conditional-section', 'classHidden': 'condition-not-met', 'classShown': 'condition-met', 'classSection': 'contents', 'classToggle': 'toggle'};
     ConditionalSection.prototype.handleEvent = function(event) {
-        this.update($(event.target));
+        this.update();
     }
-    ConditionalSection.prototype.update = function(elm) {
+    ConditionalSection.prototype.update = function() {
         this.isShown = !this.isShown;
         this.render();
     }
@@ -60,7 +60,7 @@
      */     
     function ConditionalSectionSet(container) {
         ConditionalSectionSet.__super__.constructor.call(this, container);
-		var that = this;
+        var that = this;
         this.sections     = container.find('.' + this.constants.classSection).filter(function() { return ($(this).parents('.'+ that.constants.classContainer).get(0)==container.get(0)); });
         this.section      = this.toggle.find(':checked').length ? this.sections.filter('.'+ this.toggle.find(':checked').eq(0).val()) : false;
     }
@@ -68,12 +68,15 @@
     ConditionalSectionSet.prototype.constants.classShownSection = 'active-section';
 
     ConditionalSectionSet.prototype.handleEvent = function(event) {
-        var target = $(event.target);
-        if(target.val()) { this.update(target); }
+        var targetVal = $(event.target).val(), sections = event.data.that.sections;
+
+        if(targetVal && sections.filter('.'+targetVal).length) {
+            this.update(sections.filter('.'+targetVal).eq(0), targetVal);
+        }
     }
-    ConditionalSectionSet.prototype.update = function(elm) {
+    ConditionalSectionSet.prototype.update = function(newSection, key) {
             this.isShown = true;
-            this.section = this.sections.filter('.'+elm.val());
+            this.section = newSection;
             this.render();
     }
 
@@ -91,23 +94,30 @@
      * @constructor
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */     
-    function DecisionScreenSet(container, preUpdateCallback) {
+    function DecisionScreenSet(container) {
         DecisionScreenSet.__super__.constructor.call(this, container);
-		this.sections.bind('click change', {'that':this}, function(e) {
-			if($(e.target).val()=='toggle') { e.data.that.reset(); }
-		});
+        this.sections.bind('click change', {'that':this}, function(e) { e.data.that.handleEvent(e); });
     }
     extend(DecisionScreenSet, ConditionalSectionSet);
     
-    DecisionScreenSet.prototype.update = function(elm) {
-		this.toggle.hide();
-	    DecisionScreenSet.__super__.update.call(this, elm);
+    DecisionScreenSet.prototype.handleEvent = function(event) {
+        if($(event.target).val()=='reset') {
+            this.reset();
+        }
+        else{
+            DecisionScreenSet.__super__.handleEvent.call(this, event);
+        }
+    }
+    
+    DecisionScreenSet.prototype.update = function(newSection, key) {
+            this.toggle.hide();
+            DecisionScreenSet.__super__.update.call(this, newSection, key);
     }
 
     DecisionScreenSet.prototype.reset = function() {
-		this.section = false;
-		this.toggle.show();
-		this.render();
+        this.section = false;
+        this.toggle.show();
+        this.render();
     }
 
     //export from the closure
