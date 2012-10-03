@@ -2,11 +2,12 @@
     function extend(SubClassConstructor, SuperClassConstructor) {
         //create a new, dummy object that we can use to prototype chain in the superClass's prototype while allowing us to bypass
         //its constructor, which would potentially throw errors (if it's missing args) and would drop instance vars onto our prototype.
-        function Chainer() {};
-        Chainer.prototype = SuperClassConstructor.prototype;
+        function Chainer() {
+			this.constructor = SubClassConstructor;
+		};
 
+        Chainer.prototype = SuperClassConstructor.prototype;
         SubClassConstructor.prototype = new Chainer();
-        SubClassConstructor.prototype.constructor = SubClassConstructor;
         //Set super as not an prototype property so that it's less susceptible to reassignments of this. e.g. calling SubClass.x() might
         //really produce a call of subType.__proto__.__proto__.x() (i.e. an x on the prototype of the SuperClass), and in that x `this`
         //will point to the SubClass instance, even though the SuperClass's method probably expects it to point to the SuperClass' instance.
