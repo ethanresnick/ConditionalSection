@@ -3,8 +3,8 @@
         //create a new, dummy object that we can use to prototype chain in the superClass's prototype while allowing us to bypass
         //its constructor, which would potentially throw errors (if it's missing args) and would drop instance vars onto our prototype.
         function Chainer() {
-			this.constructor = SubClassConstructor;
-		};
+            this.constructor = SubClassConstructor;
+        };
 
         Chainer.prototype = SuperClassConstructor.prototype;
         SubClassConstructor.prototype = new Chainer();
@@ -24,7 +24,7 @@
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */ 
     function ConditionalSection(container) {
-		//this binding for our event listeners and exposing the object in handleEvent.
+        //this binding for our event listeners and exposing the object in handleEvent.
         var that = this, data = {'that':this}, listener = function(e) { that.handleEvent(e); };
         
         this.container = container;
