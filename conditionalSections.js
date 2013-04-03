@@ -31,15 +31,15 @@
         //prep variables for our event listeners
         var that = this, data = {'that':this}, listener = function(e) { that.handleEvent(e); };
         
+        //initialize the instance vars
         this.container = container;
         this.toggle    = container.find('.' + this.constants.classToggle);
         this.section   = container.find('.' + this.constants.classSection).eq(0);
-    
         this.isShown   = this.toggle.find(':checked').length ? true : false;
  
-        //if the elem marked as the toggle doesn't contain anything that could be the toggle (i.e. an elem, 
-        //usually an input or link, that can be focused and acted on), wrap the toggle's contents in a link 
-        //that will capture the click event when the toggle is used.
+        //if the elem marked as the toggle doesn't contain anything that could be the toggle 
+        //(i.e. an elem, usually an input or link, that can be focused and acted on), wrap the 
+        //toggle's contents in a link that will capture the click event when the toggle is used.
         if(!this.toggle.find('input, a').length) { 
             this.toggle.contents().wrap('<a href="" onclick="return false;" />'); 
         }
@@ -72,6 +72,7 @@
             .addClass(this.isShown ? this.constants.classShown : this.constants.classHidden);
     }
 
+
     /**
      * Handles "conditional section sets", meaning that it takes a DOM structure and looks for/hooks into
      * a control that contains multiple inputs that will switch between showing one of a set of sections.
@@ -82,9 +83,14 @@
     function ConditionalSectionSet(container) {
         ConditionalSectionSet.__super__.constructor.call(this, container);
         var that = this;
-        this.sections     = container.find('.' + this.constants.classSection).filter(function() { return ($(this).parents('.'+ that.constants.classContainer).get(0)==container.get(0)); });
-        this.section      = this.toggle.find(':checked').length ? this.sections.filter('.'+ this.toggle.find(':checked').eq(0).val()) : false;
+    
+        this.sections = container.find('.' + this.constants.classSection).filter(function() { 
+                            return ($(this).parents('.'+ that.constants.classContainer).get(0)==container.get(0)); 
+                        });
+
+        this.section  = this.toggle.find(':checked').length ? this.sections.filter('.'+ this.toggle.find(':checked').eq(0).val()) : false;
     }
+
     extend(ConditionalSectionSet, ConditionalSection);
     ConditionalSectionSet.prototype.constants.classShownSection = 'active-section';
 
@@ -95,6 +101,7 @@
             this.update(sections.filter('.'+targetVal).eq(0), targetVal);
         }
     }
+
     ConditionalSectionSet.prototype.update = function(newSection, key) {
             this.isShown = true;
             this.section = newSection;
@@ -107,7 +114,8 @@
         this.sections.removeClass(this.constants.classShownSection);
         if(this.section) { this.section.addClass(this.constants.classShownSection); }
     }
-    
+
+
     /**
      * Handles a conditional section set with a decision screen (i.e. the toggle
      * goes away after the user picks an option and then can be reinvoked later).
@@ -131,8 +139,8 @@
     }
     
     DecisionScreenSet.prototype.update = function(newSection, key) {
-            this.toggle.hide();
-            DecisionScreenSet.__super__.update.call(this, newSection, key);
+        this.toggle.hide();
+        DecisionScreenSet.__super__.update.call(this, newSection, key);
     }
 
     DecisionScreenSet.prototype.reset = function() {
@@ -141,7 +149,7 @@
         this.render();
     }
 
-    //export from the closure
+    //export constructors to the global
     global.ConditionalSection    = ConditionalSection;
     global.ConditionalSectionSet = ConditionalSectionSet;
     global.DecisionScreenSet     = DecisionScreenSet;
