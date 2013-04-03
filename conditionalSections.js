@@ -1,30 +1,34 @@
 (function(global){
+
+    /** 
+     * Generic function for creating javascript "subclasses".
+     * 
+     * Modifies SubClassConstructor so it's prototype chain includes SuperClassConstructor.prototype.
+     * Also adds an __super__ property to SubClassConstructor that points the super class's prototype.
+     * 
+     * @param {function} SubClassConstructor The constructor function for the subclass.
+     * @param {function} SuperClassConstructor The constructor function for the superclass.
+     */ 
     function extend(SubClassConstructor, SuperClassConstructor) {
-        //create a new, dummy object that we can use to prototype chain in the superClass's prototype while allowing us to bypass
-        //its constructor, which would potentially throw errors (if it's missing args) and would drop instance vars onto our prototype.
         function Chainer() {
             this.constructor = SubClassConstructor;
         };
 
         Chainer.prototype = SuperClassConstructor.prototype;
         SubClassConstructor.prototype = new Chainer();
-        //Set super as not an prototype property so that it's less susceptible to reassignments of this. e.g. calling SubClass.x() might
-        //really produce a call of subType.__proto__.__proto__.x() (i.e. an x on the prototype of the SuperClass), and in that x `this`
-        //will point to the SubClass instance, even though the SuperClass's method probably expects it to point to the SuperClass' instance.
-        //We could make it an inherited property too (i.e. on SubClassConstructor.prototype), but there's really no need. Any instance
-        //that wants to get access to it's parent's prototype can do so with inst.constructor.__super__;
         SubClassConstructor.__super__  = SuperClassConstructor.prototype;
     };
     
     /**
-     * Handles "conditional sections", meaning that it takes a DOM structure and
-     * looks for/hooks into a toggle that will switch a section of content on or off.
+     * A Conditional Section is a section of content that's toggled on and off 
+     * when the user clicks on an associated, adjacent toggle.
      *
      * @constructor
-     * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
+     * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its section.
      */ 
     function ConditionalSection(container) {
-        //this binding for our event listeners and exposing the object in handleEvent.
+
+        //prep variables for our event listeners
         var that = this, data = {'that':this}, listener = function(e) { that.handleEvent(e); };
         
         this.container = container;
@@ -32,20 +36,36 @@
         this.section   = container.find('.' + this.constants.classSection).eq(0);
     
         this.isShown   = this.toggle.find(':checked').length ? true : false;
-    
-        //add listeners, etc
-        if(!this.toggle.find('input,a').length) { this.toggle.contents().wrap('<a href="" onclick="return false;" />'); }
+ 
+        //if the elem marked as the toggle doesn't contain anything that could be the toggle (i.e. an elem, 
+        //usually an input or link, that can be focused and acted on), wrap the toggle's contents in a link 
+        //that will capture the click event when the toggle is used.
+        if(!this.toggle.find('input, a').length) { 
+            this.toggle.contents().wrap('<a href="" onclick="return false;" />'); 
+        }
+
+        //add listeners (which call handleEvent) to trigger the section show/hide.
+        //will be a change listener if the toggle is an input (e.g. a checkbox) and a click listener if a link.
         this.toggle.find('input').length ? this.toggle.change(data, listener) : this.toggle.click(data, listener);
     }
     
-    ConditionalSection.prototype.constants = {'classContainer':'conditional-section', 'classHidden': 'condition-not-met', 'classShown': 'condition-met', 'classSection': 'contents', 'classToggle': 'toggle'};
+    ConditionalSection.prototype.constants = {
+        'classContainer':'conditional-section', 
+        'classHidden': 'condition-not-met', 
+        'classShown': 'condition-met', 
+        'classSection': 'contents', 
+        'classToggle': 'toggle'
+    };
+
     ConditionalSection.prototype.handleEvent = function(event) {
         this.update();
     }
+
     ConditionalSection.prototype.update = function() {
         this.isShown = !this.isShown;
         this.render();
     }
+
     ConditionalSection.prototype.render = function() {      
         this.container
             .removeClass(this.constants.classHidden + ' ' + this.constants.classShown)
