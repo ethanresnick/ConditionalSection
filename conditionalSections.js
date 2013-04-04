@@ -74,31 +74,39 @@
 
 
     /**
-     * Handles "conditional section sets", meaning that it takes a DOM structure and looks for/hooks into
-     * a control that contains multiple inputs that will switch between showing one of a set of sections.
+     * A Conditional Section Set is a group of related sections in which only one section applies 
+     * (and is therefore the only one that's shown), depending on a user's choice from a set of options.
+     * It's similar to a tab bar behaviorally, in that if the user clicks on a different radio button 
+     * (i.e. makes a different choice) a different section shows up. But it has different semantics: 
+     * unlike tabs, where the user might find the content in all the tabs relevant at the same time, 
+     * in a conditional section set, only one section is ultimately applicable. The only point of the 
+     * section switching mechanism, therefore, is if the user changes his/her mind about the main choice
+     * that dictates which section applies.
      *
      * @constructor
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
      */     
     function ConditionalSectionSet(container) {
+
         ConditionalSectionSet.__super__.constructor.call(this, container);
-        var that = this;
+        var that = this, selectedChoice = this.toggle.find(':checked');
     
         this.sections = container.find('.' + this.constants.classSection).filter(function() { 
-                            return ($(this).parents('.'+ that.constants.classContainer).get(0)==container.get(0)); 
-                        });
-
-        this.section  = this.toggle.find(':checked').length ? this.sections.filter('.'+ this.toggle.find(':checked').eq(0).val()) : false;
+                return ($(this).parents('.'+ that.constants.classContainer).get(0)==container.get(0)); 
+        });
+        this.section  = selectedChoice.length ? this.sections.filter('.'+ selectedChoice.eq(0).val()) : false;
     }
 
     extend(ConditionalSectionSet, ConditionalSection);
     ConditionalSectionSet.prototype.constants.classShownSection = 'active-section';
 
     ConditionalSectionSet.prototype.handleEvent = function(event) {
-        var targetVal = $(event.target).val(), sections = event.data.that.sections;
+        var targetVal    = $(event.target).val(), 
+            sections     = event.data.that.sections, 
+            validSection = sections.filter('.'+targetVal);
 
-        if(targetVal && sections.filter('.'+targetVal).length) {
-            this.update(sections.filter('.'+targetVal).eq(0), targetVal);
+        if(targetVal && validSection.length) {
+            this.update(validSection.eq(0), targetVal);
         }
     }
 
@@ -117,8 +125,13 @@
 
 
     /**
-     * Handles a conditional section set with a decision screen (i.e. the toggle
-     * goes away after the user picks an option and then can be reinvoked later).
+     * Handles the Conditional Section Set semantics with a "decision screen" acting as the toggle.
+     * A decision screen is an intermediate screen that requires the user to make a choice before 
+     * seeing any section (i.e. there never a default section) and that is then hidden until the user 
+     * specifically reinvokes it. This is useful for conditional section sets where you want the user 
+     * to think more carefully about the decision upfront (e.g. because switching midway might cause 
+     * some of their input to be lost) or where the initial options need some explanatory text 
+     * (on the decision screen) that should then go away after the user's chosen.
      *
      * @constructor
      * @param {jQuery} container A jQuery-wrapped DOM element that contains your toggle and its sections.
