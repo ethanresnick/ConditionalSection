@@ -1,5 +1,5 @@
 {
-    "name": "Conditional Sections",
+    "name": "ConditionalSection",
     "version": "1.0",
     "description": "JS library for implementing three UI elements that support progressive disclosure.",
     "keywords": ["progressive disclosure"],
@@ -17,5 +17,8 @@
     },
     "scripts": {
 	"test": "node test/node-index.js"
+    },
+    "dependencies": {
+
     }
 }
