@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - 0.10
 script:  
-  - "phantomjs node_modules/qunitjs/addons/phantomjs/runner.js file://../../../../test/index.html"
+  - "phantomjs node_modules/qunitjs/addons/phantomjs/runner.js file://test/index.html"
