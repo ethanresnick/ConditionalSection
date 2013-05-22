@@ -15,10 +15,8 @@
 	"type": "git",
 	"url": "git://github.com/ethanresnick/ConditionalSection.git"
     },
-    "scripts": {
-	"test": "node test/node-index.js"
-    },
-    "dependencies": {
-
+    "dependencies": {},
+    "devDependencies": {
+        "qunit": "~1.11.0"
     }
 }
