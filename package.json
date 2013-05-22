@@ -1,0 +1,21 @@
+{
+    "name": "Conditional Sections",
+    "version": "1.0",
+    "description": "JS library for implementing three UI elements that support progressive disclosure.",
+    "keywords": ["progressive disclosure"],
+    "homepage": "https://github.com/ethanresnick/ConditionalSection",
+
+    "author": {
+	"name": "John Doe",
+    	"web": "https://github.com/JohnDoe"
+    },
+
+    "main": "./conditionalSection.js",
+    "repository": {
+	"type": "git",
+	"url": "git://github.com/ethanresnick/ConditionalSection.git"
+    },
+    "scripts": {
+	"test": "node test/node-index.js"
+    }
+}
