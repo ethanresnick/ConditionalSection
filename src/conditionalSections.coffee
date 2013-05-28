@@ -106,19 +106,24 @@ class ConditionalSectionSet extends ConditionalSection
 class DecisionScreenSet extends ConditionalSectionSet
   constructor: (container) ->
     super container
+    @userHasChosen = false
     @sections.bind('click change', 'that': @, (e) -> e.data.that.handleEvent(e))
     
   handleEvent: (event) ->
     if $(event.target).val() is 'reset' then @reset() else super(event)
     
   update: (newSection, key) ->
-    @toggle.hide()
+    @userHasChosen = true
     super newSection, key
 
   reset: () ->
     @section = false
-    @toggle.show()
+    @userHasChosen = false
     @render()
+
+  render: () ->
+    if @userHasChosen then @toggle.hide() else @toggle.show()
+    super()
 
 
 # export constructors to the global
