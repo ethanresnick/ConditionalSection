@@ -74,8 +74,8 @@
       var targetVal, validSection;
 
       targetVal = $(event.target).val();
-      validSection = event.data.that.sections.filter('.' + targetVal);
-      if (targetVal && validSection.length) {
+      validSection = targetVal ? event.data.that.sections.filter('.' + targetVal) : false;
+      if (validSection && validSection.length) {
         return this.update(validSection.eq(0), targetVal);
       }
     };

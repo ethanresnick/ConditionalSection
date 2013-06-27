@@ -74,9 +74,9 @@ class ConditionalSectionSet extends ConditionalSection
 
   handleEvent: (event) ->
     targetVal = $(event.target).val()
-    validSection = event.data.that.sections.filter('.'+targetVal);
+    validSection = if targetVal then event.data.that.sections.filter('.'+targetVal) else false;
 
-    if targetVal && validSection.length then @update(validSection.eq(0), targetVal)
+    if validSection && validSection.length then @update(validSection.eq(0), targetVal)
 
   update: (newSection, key) -> 
     @isShown = true
