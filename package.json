@@ -6,8 +6,8 @@
     "homepage": "https://github.com/ethanresnick/ConditionalSection",
 
     "author": {
-	"name": "John Doe",
-    	"web": "https://github.com/JohnDoe"
+	"name": "Ethan Resnick",
+	"web": "http://www.ethanresnick.com/"
     },
 
     "main": "./conditionalSection.js",
