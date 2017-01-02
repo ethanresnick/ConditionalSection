@@ -17,6 +17,6 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "qunitjs": "~1.11.0"
+        "qunitjs": "~2.1.0"
     }
 }
